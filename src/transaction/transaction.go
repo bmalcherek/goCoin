@@ -2,16 +2,19 @@ package transaction
 
 import (
 	"crypto/ecdsa"
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/bmalcherek/goCoin/src/constants"
 	"github.com/bmalcherek/goCoin/src/crypto"
 )
 
 type Transaction struct {
-	Id     string
-	TxIns  []*TxIn
-	TxOuts []*TxOut
+	Id        string
+	TxIns     []*TxIn
+	TxOuts    []*TxOut
+	Timestamp int64
 }
 
 func (t *Transaction) Sign() {
@@ -24,6 +27,7 @@ func (t *Transaction) Sign() {
 	for _, tx := range t.TxIns {
 		sb.WriteString(tx.String())
 	}
+	sb.WriteString(fmt.Sprintf("%d", t.Timestamp))
 
 	t.Id = crypto.Sha256(sb.String())
 }
@@ -36,6 +40,7 @@ func CreateCoinbaseTransaction(address *ecdsa.PublicKey) *Transaction {
 				Amount:  constants.CoinbaseTransactionAmount,
 			},
 		},
+		Timestamp: time.Now().UnixNano(),
 	}
 
 	t.Sign()

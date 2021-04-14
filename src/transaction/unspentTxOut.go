@@ -16,7 +16,7 @@ func FilterUnspentTxOuts(uTxOuts []*UnspentTxOut, address *ecdsa.PublicKey) []*U
 	txs := []*UnspentTxOut{}
 
 	for _, tx := range uTxOuts {
-		if tx.Address == address {
+		if tx.Address.X.Cmp(address.X) == 0 && tx.Address.Y.Cmp(address.Y) == 0 {
 			txs = append(txs, tx)
 		}
 	}

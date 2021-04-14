@@ -25,3 +25,19 @@
 
 # End of https://www.toptal.com/developers/gitignore/api/go
 __debug_bin
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+### Above combination will ignore all files without extension ###
+
+.vscode/
