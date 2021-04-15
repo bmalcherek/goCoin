@@ -3,11 +3,14 @@ package main
 import (
 	"crypto/elliptic"
 	"encoding/gob"
+	"flag"
 	"fmt"
 	"math/rand"
 	"sync"
 	"time"
 
+	"github.com/bmalcherek/goCoin/src/blockchain.go"
+	"github.com/bmalcherek/goCoin/src/miner"
 	"github.com/bmalcherek/goCoin/src/p2p"
 	"github.com/bmalcherek/goCoin/src/programData"
 	"github.com/bmalcherek/goCoin/src/transaction"
@@ -21,23 +24,37 @@ var (
 func main() {
 	gob.Register(elliptic.P256())
 
+	w := flag.String("wallet", fmt.Sprintf("%d", rand.Intn(24124120)), "wallet seed")
+
 	store = &programData.Store{
 		Transactions:  []*transaction.Transaction{},
 		UnspentTxOuts: []*transaction.UnspentTxOut{},
 		Wallets: []*wallet.Wallet{
-			wallet.InitWallet("test"),
+			wallet.InitWallet(*w),
+			wallet.InitWallet(fmt.Sprintf("%d", rand.Intn(24124120))),
 			wallet.InitWallet("abc"),
 		},
 		Lock: &sync.RWMutex{},
 	}
 
-	p2p.Setup()
+	blockchain := blockchain.InitializeBlockchain()
 
-	go handleNewTransaction()
-	go sendTransaction()
-	go transactionPrinter()
+	miner.Mine(store, blockchain)
 
-	select {}
+	fmt.Println(blockchain)
+
+	// x := fmt.Sprintf("%X", store.Wallets[0].PrivateKey.PublicKey.X)
+	// y := fmt.Sprintf("%X", store.Wallets[0].PrivateKey.PublicKey.Y)
+
+	// fmt.Printf("%s - %d\n%s - %d\n", x, len(x), y, len(y))
+
+	// p2p.Setup()
+
+	// go handleNewTransaction()
+	// go sendTransaction()
+	// go transactionPrinter()
+
+	// select {}
 }
 
 func sendTransaction() {

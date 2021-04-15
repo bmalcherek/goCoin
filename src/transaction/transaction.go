@@ -89,3 +89,21 @@ func mapUnspentTxOuts(t *Transaction, uTxOuts []*UnspentTxOut) []*UnspentTxOut {
 
 	return append(uTxOuts, newUnspentTxOuts...)
 }
+
+func (t *Transaction) String() string {
+	var sb strings.Builder
+
+	sb.WriteString(t.Id)
+
+	for _, tx := range t.TxIns {
+		sb.WriteString(tx.String())
+	}
+
+	for _, tx := range t.TxOuts {
+		sb.WriteString(tx.String())
+	}
+
+	sb.WriteString(fmt.Sprintf("%d", t.Timestamp))
+
+	return sb.String()
+}
